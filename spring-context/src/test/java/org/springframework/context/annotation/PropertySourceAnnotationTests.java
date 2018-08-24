@@ -31,6 +31,7 @@ import org.junit.rules.ExpectedException;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.support.YamlPropertySourceFactory;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
@@ -133,6 +134,22 @@ public class PropertySourceAnnotationTests {
 		ctx.register(ConfigWithImplicitName.class, WithCustomFactoryAsMeta.class);
 		ctx.refresh();
 		assertThat(ctx.getBean(TestBean.class).getName(), equalTo("P2TESTBEAN"));
+	}
+
+	@Test
+	public void withYamlFactory() {
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+		ctx.register(ConfigWithImplicitName.class, WithYamlFactory.class);
+		ctx.refresh();
+		assertThat(ctx.getBean(TestBean.class).getName(), equalTo("p2TestBean"));
+	}
+
+	@Test
+	public void withYamlFactoryAsMeta() {
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+		ctx.register(ConfigWithImplicitName.class, WithYamlFactoryAsMeta.class);
+		ctx.refresh();
+		assertThat(ctx.getBean(TestBean.class).getName(), equalTo("p2TestBean"));
 	}
 
 	@Test
@@ -389,6 +406,16 @@ public class PropertySourceAnnotationTests {
 	static class WithCustomFactoryAsMeta {
 	}
 
+	@Configuration
+	@PropertySource(value = "classpath:org/springframework/context/annotation/p2.yml", factory = YamlPropertySourceFactory.class)
+	static class WithYamlFactory {
+	}
+
+
+	@Configuration
+	@YamlPropertySource(value = "classpath:org/springframework/context/annotation/p2.yml")
+	static class WithYamlFactoryAsMeta {
+	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@PropertySource(value = {}, factory = MyCustomFactory.class)

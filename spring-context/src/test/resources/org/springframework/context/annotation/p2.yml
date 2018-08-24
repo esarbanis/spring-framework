@@ -1,0 +1,4 @@
+testbean:
+  name: p2TestBean
+from:
+  p2: p2Value
